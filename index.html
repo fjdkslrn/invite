@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>돌잔치 초대장</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'GowunDodum-Regular', sans-serif;
+            background: #f8f8f8;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            position: relative;
+        }
+
+        /* 첫 번째 페이지 - 표지 */
+        .cover-page {
+            height: 100vh;
+            background: linear-gradient(135deg, #fff9e6 0%, #fff 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: opacity 0.8s ease;
+        }
+
+        .cover-title {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff9500;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 2px solid #ff9500;
+            padding-bottom: 5px;
+        }
+
+        .baby-photo-cover {
+            width: 280px;
+            height: 350px;
+            border-radius: 50%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 350"><rect width="280" height="350" fill="%23f0f0f0"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" font-family="Arial" font-size="14" fill="%23666">아기 사진이 들어갈 자리</text></svg>') center/cover;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .happy-birthday-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff9500;
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .star-decoration {
+            color: #ff9500;
+            font-size: 24px;
+            margin: 0 10px;
+        }
+
+        .event-info-cover {
+            text-align: center;
+            color: #ff9500;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .event-date-cover {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .event-location-cover {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* 두 번째 페이지 - 상세 정보 */
+        .detail-page {
+            min-height: 100vh;
+            background: #f8f8f8;
+            padding: 40px 20px;
+            transform: translateY(100vh);
+            transition: transform 0.8s ease;
+        }
+
+        .detail-page.active {
+            transform: translateY(0);
+        }
+
+        .greeting-section {
+            text-align: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .greeting-title {
+            color: #ff9500;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .greeting-text {
+            color: #333;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .save-date-section {
+            text-align: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .save-date-title {
+            color: #ff9500;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .countdown-item {
+            background: #f0f0f0;
+            padding: 15px 10px;
+            border-radius: 10px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .countdown-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .countdown-message {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .countdown-highlight {
+            color: #ff9500;
+            font-weight: bold;
+        }
+
+        .event-details-section {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            color: #ff9500;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .event-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .event-date {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .event-location {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .calendar-section {
+            margin-top: 30px;
+        }
+
+        .calendar-month {
+            color: #ff9500;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+
+        .calendar-header {
+            font-size: 12px;
+            color: #666;
+            font-weight: bold;
+            padding: 8px 0;
+        }
+
+        .calendar-day {
+            padding: 8px;
+            font-size: 14px;
+            color: #333;
+            border-radius: 5px;
+        }
+
+        .calendar-day.highlight {
+            background: #ff9500;
+            color: white;
+            font-weight: bold;
+        }
+
+        .calendar-day.other-month {
+            color: #ccc;
+        }
+
+        .timeline-section {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .timeline-title {
+            color: #ff9500;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #ff9500;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -23px;
+            top: 5px;
+            width: 8px;
+            height: 8px;
+            background: #ff9500;
+            border-radius: 50%;
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content {
+            font-size: 14px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .map-section {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .map-container {
+            width: 100%;
+            height: 200px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #666;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff9500;
+            font-size: 12px;
+            animation: bounce 2s infinite;
+            z-index: 100;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        /* 스크롤 효과 */
+        .fade-out {
+            opacity: 0;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .detail-page {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 첫 번째 페이지 - 표지 -->
+        <div class="cover-page" id="coverPage">
+            <div class="cover-title">1st birthday</div>
+            
+            <div class="baby-photo-cover">
+                <div class="happy-birthday-text">
+                    <span class="star-decoration">✨</span>
+                    happy<br>birthday
+                    <span class="star-decoration">✨</span>
+                </div>
+            </div>
+            
+            <div class="event-info-cover">
+                <div class="event-date-cover">✨ 이태연 ✨</div>
+                <div class="event-date-cover">25.07.26 | 11:30</div>
+                <div class="event-location-cover">마이어스 안산</div>
+            </div>
+            
+            <div class="scroll-indicator">
+                스크롤해주세요 ↓
+            </div>
+        </div>
+
+        <!-- 두 번째 페이지 - 상세 정보 -->
+        <div class="detail-page" id="detailPage">
+            <div class="greeting-section">
+                <div class="greeting-title">
+                    초대합니다 💌
+                </div>
+                <div class="greeting-text">
+                    태연이가 무럭무럭 자라<br>
+                    어느덧 첫번째 생일을 맞이하였습니다.<br><br>
+                    사랑과 관심으로 지켜봐주신 소중한 분들께<br>
+                    감사의 마음으로 작은 자리를 마련하였습니다.<br><br>
+                    뜻깊은 날에 소중한 발걸음 하시어<br>
+                    함께해 주시면 감사하겠습니다.
+                </div>
+            </div>
+
+            <div class="save-date-section">
+                <div class="save-date-title">Save the Date</div>
+                <div class="countdown-container">
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="days">00</span>
+                        <div class="countdown-label">DAYS</div>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="hours">00</span>
+                        <div class="countdown-label">HOURS</div>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="minutes">00</span>
+                        <div class="countdown-label">MINUTES</div>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="seconds">00</span>
+                        <div class="countdown-label">SECONDS</div>
+                    </div>
+                </div>
+                <div class="countdown-message">
+                    이태현의 첫번째 생일이 <span class="countdown-highlight" id="totalDays">0</span>일 남았습니다.
+                </div>
+            </div>
+
+            <div class="event-details-section">
+                <div class="section-title">돌잔치 안내</div>
+                <div class="event-info">
+                    <div class="event-date">2025년 7월 30일 토요일 오전 11:30</div>
+                    <div class="event-location">마이어스 안산</div>
+                </div>
+                
+                <div class="calendar-section">
+                    <div class="calendar-month">7월</div>
+                    <div class="calendar-grid">
+                        <div class="calendar-header">일</div>
+                        <div class="calendar-header">월</div>
+                        <div class="calendar-header">화</div>
+                        <div class="calendar-header">수</div>
+                        <div class="calendar-header">목</div>
+                        <div class="calendar-header">금</div>
+                        <div class="calendar-header">토</div>
+                        
+                        <div class="calendar-day other-month">29</div>
+                        <div class="calendar-day other-month">30</div>
+                        <div class="calendar-day">1</div>
+                        <div class="calendar-day">2</div>
+                        <div class="calendar-day">3</div>
+                        <div class="calendar-day">4</div>
+                        <div class="calendar-day">5</div>
+                        
+                        <div class="calendar-day">6</div>
+                        <div class="calendar-day">7</div>
+                        <div class="calendar-day">8</div>
+                        <div class="calendar-day">9</div>
+                        <div class="calendar-day">10</div>
+                        <div class="calendar-day">11</div>
+                        <div class="calendar-day">12</div>
+                        
+                        <div class="calendar-day">13</div>
+                        <div class="calendar-day">14</div>
+                        <div class="calendar-day">15</div>
+                        <div class="calendar-day">16</div>
+                        <div class="calendar-day">17</div>
+                        <div class="calendar-day">18</div>
+                        <div class="calendar-day">19</div>
+                        
+                        <div class="calendar-day">20</div>
+                        <div class="calendar-day">21</div>
+                        <div class="calendar-day">22</div>
+                        <div class="calendar-day">23</div>
+                        <div class="calendar-day">24</div>
+                        <div class="calendar-day">25</div>
+                        <div class="calendar-day">26</div>
+                        
+                        <div class="calendar-day">27</div>
+                        <div class="calendar-day">28</div>
+                        <div class="calendar-day">29</div>
+                        <div class="calendar-day highlight">30</div>
+                        <div class="calendar-day">31</div>
+                        <div class="calendar-day other-month">1</div>
+                        <div class="calendar-day other-month">2</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-section">
+                <div class="timeline-title">1년간의 성장일기</div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2023.10.12</div>
+                        <div class="timeline-content">처음 만난 날</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2023.02.27</div>
+                        <div class="timeline-content">세상에 태어난 날</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2024.01.13</div>
+                        <div class="timeline-content">50일</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2024.04.22</div>
+                        <div class="timeline-content">100일</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-section">
+                <div class="section-title">오시는 길</div>
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        지도가 들어갈 자리<br>
+                        (네이버 지도 API 또는 Google Maps API 필요)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 카운트다운 타이머
+        function updateCountdown() {
+            const targetDate = new Date('2025-07-30T11:30:00').getTime();
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+                document.getElementById('totalDays').textContent = days;
+            } else {
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                document.getElementById('totalDays').textContent = '0';
+            }
+        }
+
+        // 1초마다 카운트다운 업데이트
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // 스크롤 이벤트 처리
+        let isScrolling = false;
+        
+        window.addEventListener('scroll', () => {
+            if (isScrolling) return;
+            
+            const scrollY = window.scrollY;
+            const coverPage = document.getElementById('coverPage');
+            const detailPage = document.getElementById('detailPage');
+            
+            if (scrollY > 100) {
+                coverPage.classList.add('fade-out');
+                detailPage.classList.add('active');
+            } else {
+                coverPage.classList.remove('fade-out');
+                detailPage.classList.remove('active');
+            }
+        });
+
+        // 터치 스크롤 지원
+        let startY = 0;
+        
+        document.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+        });
+        
+        document.addEventListener('touchmove', (e) => {
+            const currentY = e.touches[0].clientY;
+            const diff = startY - currentY;
+            
+            if (diff > 50) {
+                document.getElementById('coverPage').classList.add('fade-out');
+                document.getElementById('detailPage').classList.add('active');
+            } else if (diff < -50) {
+                document.getElementById('coverPage').classList.remove('fade-out');
+                document.getElementById('detailPage').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
