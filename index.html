@@ -52,7 +52,7 @@
             width: 280px;
             height: 350px;
             border-radius: 50%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 350"><rect width="280" height="350" fill="%23f0f0f0"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" font-family="Arial" font-size="14" fill="%23666">아기 사진이 들어갈 자리</text></svg>') center/cover;
+            background: url('1.jpg') center/cover;
             margin-bottom: 40px;
             position: relative;
             overflow: hidden;
@@ -67,10 +67,10 @@
             font-size: 36px;
             font-weight: bold;
             text-align: center;
-            background: rgba(255, 255, 255, 0.9);
+            /* background: rgba(255, 255, 255, 0.9); */
             padding: 20px;
             border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            /* box-shadow: 0 5px 20px rgba(0,0,0,0.1); */
         }
 
         .star-decoration {
@@ -452,14 +452,14 @@
                     </div>
                 </div>
                 <div class="countdown-message">
-                    이태현의 첫번째 생일이 <span class="countdown-highlight" id="totalDays">0</span>일 남았습니다.
+                    이태연의 첫번째 생일이 <span class="countdown-highlight" id="totalDays">0</span>일 남았습니다.
                 </div>
             </div>
 
             <div class="event-details-section">
                 <div class="section-title">돌잔치 안내</div>
                 <div class="event-info">
-                    <div class="event-date">2025년 7월 30일 토요일 오전 11:30</div>
+                    <div class="event-date">2025년 7월 26일 토요일 오전 11:30</div>
                     <div class="event-location">마이어스 안산</div>
                 </div>
                 
@@ -521,19 +521,19 @@
                 <div class="timeline-title">1년간의 성장일기</div>
                 <div class="timeline">
                     <div class="timeline-item">
-                        <div class="timeline-date">2023.10.12</div>
+                        <div class="timeline-date">2023.12.14</div>
                         <div class="timeline-content">처음 만난 날</div>
                     </div>
                     <div class="timeline-item">
-                        <div class="timeline-date">2023.02.27</div>
+                        <div class="timeline-date">2024.07.30</div>
                         <div class="timeline-content">세상에 태어난 날</div>
                     </div>
                     <div class="timeline-item">
-                        <div class="timeline-date">2024.01.13</div>
+                        <div class="timeline-date">2024.09.17</div>
                         <div class="timeline-content">50일</div>
                     </div>
                     <div class="timeline-item">
-                        <div class="timeline-date">2024.04.22</div>
+                        <div class="timeline-date">2024.11.07</div>
                         <div class="timeline-content">100일</div>
                     </div>
                 </div>
@@ -554,7 +554,7 @@
     <script>
         // 카운트다운 타이머
         function updateCountdown() {
-            const targetDate = new Date('2025-07-30T11:30:00').getTime();
+            const targetDate = new Date('2025-07-26T11:30:00').getTime();
             const now = new Date().getTime();
             const distance = targetDate - now;
 
