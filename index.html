@@ -37,18 +37,17 @@
             background: linear-gradient(135deg, #fff9e6 0%, #fff 100%);
             display: flex;
             flex-direction: column;
-            justify-content: center; /* 중앙 정렬 유지 */
+            justify-content: center;
             align-items: center;
             position: relative;
             transition: opacity 0.5s ease;
-            /* ✨ 수정 사항: 상단 여백 추가 (1st birthday 텍스트와 사진 사이 공간 확보) */
-            padding-top: 100px; /* '1st birthday' 텍스트와 사진 사이에 공간 확보 */
-            justify-content: flex-start; /* 상단부터 시작하여 요소들이 위로 밀리지 않도록 조정 */
+            padding-top: 100px;
+            justify-content: flex-start;
         }
 
         .cover-title {
-            position: absolute; /* 절대 위치 유지 */
-            top: 50px; /* ✨ 수정 사항: top 값을 줄여서 더 위로 올림 */
+            position: absolute;
+            top: 50px;
             left: 50%;
             transform: translateX(-50%);
             color: #ff9500;
@@ -56,20 +55,17 @@
             font-weight: bold;
             border-bottom: 2px solid #ff9500;
             padding-bottom: 5px;
-            z-index: 10; /* 다른 요소 위에 확실히 표시되도록 z-index 추가 */
+            z-index: 10;
         }
 
         .baby-photo-cover {
             width: 280px;
             height: 350px;
-            /* 배경 이미지 경로는 실제 이미지 파일명으로 변경하세요 */
             background: url('1.jpg') center/cover;
             margin-bottom: 40px;
             position: relative;
             overflow: hidden;
             border-radius: 50%;
-            /* ✨ 추가 사항: 텍스트와의 시각적 겹침 방지를 위해 사진 자체의 상단 여백을 고려할 수도 있음 */
-            /* margin-top: 50px; */ /* cover-page의 padding-top과 함께 고려 */
         }
 
         .happy-birthday-text {
@@ -96,7 +92,6 @@
             color: #ff9500;
             font-size: 16px;
             font-weight: bold;
-            /* ✨ 수정 사항: 사진과의 간격이 더 필요할 경우 margin-top 추가 */
             margin-top: 20px;
         }
 
@@ -345,6 +340,7 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
+        /* 지도 컨테이너 기본 스타일 */
         .map-container {
             width: 100%;
             height: 200px;
@@ -353,13 +349,15 @@
             margin-bottom: 15px;
             position: relative;
             overflow: hidden;
+            /* ✨ 수정 사항: 지도가 로드되면 placeholder가 사라지도록 */
+            display: flex;
+            /* placeholder를 중앙 정렬하기 위해 flex 사용 */
+            justify-content: center;
+            align-items: center;
         }
 
         .map-placeholder {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            /* 지도 로딩 중 표시 */
             color: #666;
             text-align: center;
             font-size: 14px;
@@ -377,6 +375,7 @@
         }
 
         @keyframes bounce {
+
             0%,
             20%,
             50%,
@@ -409,15 +408,17 @@
                 padding: 20px 15px;
             }
 
-            /* ✨ 추가 사항: 작은 화면에서 cover-page의 상단 여백 조절 */
             .cover-page {
-                padding-top: 80px; /* 모바일 환경에 맞게 조정 */
+                padding-top: 80px;
             }
+
             .cover-title {
-                top: 30px; /* 더 위로 올려서 공간 확보 */
+                top: 30px;
             }
         }
     </style>
+
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=78supwc81k"></script>
 </head>
 
 <body>
@@ -569,10 +570,9 @@
 
             <div class="map-section">
                 <div class="section-title">오시는 길</div>
-                <div class="map-container">
+                <div class="map-container" id="map">
                     <div class="map-placeholder">
-                        지도가 들어갈 자리<br>
-                        (네이버 지도 API 또는 Google Maps API 필요)
+                        지도를 불러오는 중...
                     </div>
                 </div>
             </div>
@@ -580,8 +580,9 @@
     </div>
 
     <script>
+        // 카운트다운 타이머
         function updateCountdown() {
-            const targetDate = new Date('2025-07-26T11:30:00+09:00').getTime();
+            const targetDate = new Date('2025-07-26T11:30:00+09:00').getTime(); // 한국 시간(KST) +09:00 추가
             const now = new Date().getTime();
             const distance = targetDate - now;
 
@@ -608,14 +609,13 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
+        // 스크롤 및 터치 이벤트 처리
         const coverPage = document.getElementById('coverPage');
         const detailPage = document.getElementById('detailPage');
         let animationFrameId = null;
 
         function handleScrollEffect() {
             const scrollY = window.scrollY;
-
-            // 뷰포트 높이의 약 10% 정도 스크롤되면 전환되도록 임계값 설정
             const threshold = window.innerHeight * 0.1;
 
             if (scrollY > threshold) {
@@ -643,14 +643,14 @@
         document.addEventListener('touchmove', (e) => {
             const currentY = e.touches[0].clientY;
             const diff = startY - currentY;
-            const touchThreshold = window.innerHeight * 0.05; // 터치 스크롤 임계값 (뷰포트 높이의 5%)
+            const touchThreshold = window.innerHeight * 0.05;
 
             if (!animationFrameId) {
                 animationFrameId = requestAnimationFrame(() => {
-                    if (diff > touchThreshold) { // 위로 스크롤 (상세 페이지로 전환)
+                    if (diff > touchThreshold) {
                         coverPage.classList.add('fade-out');
                         detailPage.classList.add('active');
-                    } else if (diff < -touchThreshold) { // 아래로 스크롤 (표지 페이지로 전환)
+                    } else if (diff < -touchThreshold) {
                         coverPage.classList.remove('fade-out');
                         detailPage.classList.remove('active');
                     }
@@ -668,7 +668,79 @@
                     day.classList.remove('highlight');
                 }
             });
+
+            // ✨ 네이버 지도 초기화 함수 호출 (DOMContentLoaded 이후에 호출)
+            initNaverMap();
         });
+
+
+        // ✨ 네이버 지도 API 초기화 함수
+        function initNaverMap() {
+            const mapContainer = document.getElementById('map'); // 지도를 표시할 div
+            const mapPlaceholder = mapContainer.querySelector('.map-placeholder');
+
+            // 마이어스 안산의 대략적인 위도, 경도 정보 (네이버 지도 검색을 통해 확인 가능)
+            // 정확한 좌표는 네이버 지도에서 '마이어스 안산' 검색 후, URL에서 lat, lng 값을 확인하거나
+            // 개발자 도구로 지도상의 정확한 위치를 클릭하여 얻을 수 있습니다.
+            const MYERS_ANSAN_LAT = 37.3199424; // 예시 위도
+            const MYERS_ANSAN_LNG = 126.8313985; // 예시 경도
+
+            const mapOptions = {
+                center: new naver.maps.LatLng(MYERS_ANSAN_LAT, MYERS_ANSAN_LNG), // 중심 좌표
+                zoom: 16, // 지도 확대 레벨 (1~21)
+                minZoom: 10, // 지도의 최소 줌 레벨
+                maxZoom: 18, // 지도의 최대 줌 레벨
+                scaleControl: true, // 스케일 컨트롤 표시
+                mapDataControl: true, // 지도 데이터 저작권 컨트롤 표시
+                zoomControl: true, // 줌 컨트롤 표시
+                zoomControlOptions: { // 줌 컨트롤 옵션
+                    position: naver.maps.Position.TOP_RIGHT
+                }
+            };
+
+            const map = new naver.maps.Map(mapContainer, mapOptions);
+
+            // 마커 추가
+            const marker = new naver.maps.Marker({
+                position: new naver.maps.LatLng(MYERS_ANSAN_LAT, MYERS_ANSAN_LNG),
+                map: map,
+                title: '마이어스 안산'
+            });
+
+            // 정보창 추가 (마커 클릭 시)
+            const infowindow = new naver.maps.InfoWindow({
+                content: '<div style="padding:10px; width:150px; text-align:center;"><b>마이어스 안산</b><br>이태연 돌잔치 장소</div>'
+            });
+
+            naver.maps.Event.addListener(marker, "click", function (e) {
+                if (infowindow.getMap()) {
+                    infowindow.close();
+                } else {
+                    infowindow.open(map, marker);
+                }
+            });
+
+            // 지도가 로드되면 placeholder 숨김
+            map.addListener('tilesloaded', function () {
+                if (mapPlaceholder) {
+                    mapPlaceholder.style.display = 'none';
+                }
+            });
+
+            // 지도 중앙에 위치시키는 버튼 또는 링크 추가 (선택 사항)
+            // 지도 아래에 "지도에서 보기" 링크를 추가하여 클릭 시 네이버 지도로 이동
+            const mapLink = document.createElement('a');
+            mapLink.href = `https://map.naver.com/p/search/%EB%A7%88%EC%9D%B4%EC%96%B4%EC%8A%A4%20%EC%95%88%EC%82%B0?c=${MYERS_ANSAN_LNG},${MYERS_ANSAN_LAT},16,0,0,0,dh`;
+            mapLink.target = '_blank';
+            mapLink.textContent = '네이버 지도로 보기';
+            mapLink.style.display = 'block';
+            mapLink.style.textAlign = 'center';
+            mapLink.style.marginTop = '10px';
+            mapLink.style.color = '#ff9500';
+            mapLink.style.textDecoration = 'underline';
+            mapLink.style.fontSize = '14px';
+            mapContainer.parentNode.appendChild(mapLink);
+        }
     </script>
 </body>
 
