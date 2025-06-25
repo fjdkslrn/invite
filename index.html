@@ -7,7 +7,7 @@
     <title>돌잔치 초대장</title>
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://fjdkslrn.github.io/invite/">
-    <meta property="og:title" content="✨ 이태연 아기의 첫번째 생일에 초대합니다 ✨">
+    <meta property="og:title" content="✨ 태연이의 첫번째 생일에 초대합니다 ✨">
     <meta property="og:description" content="태연이가 어느덧 첫번째 생일을 맞이하였습니다. 귀한 발걸음 하시어 함께 축하해주세요!">
     <meta property="og:image" content="https://fjdkslrn.github.io/invite/thumbnail.jpg">
     <meta property="og:image:width" content="800">
@@ -159,6 +159,7 @@
             color: #333;
             line-height: 1.8;
             font-size: 14px;
+            font-weight: bold;
         }
 
         .save-date-section {
@@ -208,6 +209,7 @@
         .countdown-message {
             color: #333;
             font-size: 14px;
+            font-weight: bold;
         }
 
         .countdown-highlight {
@@ -472,7 +474,7 @@
             </div>
 
             <div class="event-info-cover">
-                <div class="event-date-cover">✨ 이태연 ✨</div>
+                <div class="event-date-cover">🧡 이태연 🧡</div>
                 <div class="event-date-cover">25.07.26 | 11:30</div>
                 <div class="event-location-cover">마이어스 안산</div>
             </div>
@@ -518,15 +520,15 @@
                     </div>
                 </div>
                 <div class="countdown-message">
-                    이태연의 첫번째 생일이 <span class="countdown-highlight" id="totalDays">0</span>일 남았습니다.
+                    태연이의 첫번째 생일이 <span class="countdown-highlight" id="totalDays">0</span>일 남았습니다.
                 </div>
             </div>
 
             <div class="event-details-section">
                 <div class="section-title">돌잔치 안내</div>
                 <div class="event-info">
-                    <div class="event-date">2025년 7월 26일 토요일 오전 11:30</div>
-                    <div class="event-location">마이어스 안산</div>
+                    <div class="event-date">2025년 7월 26일 토요일<br>오전 11:30</div>
+                    <div class="event-location">마이어스 안산_사랑채홀</div>
                 </div>
 
                 <div class="calendar-section">
@@ -641,7 +643,7 @@
 
         function handleScrollEffect() {
             const scrollY = window.scrollY;
-            const threshold = window.innerHeight * 0.05;
+            const threshold = window.innerHeight * 0.5;
 
             if (scrollY > threshold) {
                 coverPage.classList.add('fade-out');
@@ -668,7 +670,7 @@
         document.addEventListener('touchmove', (e) => {
             const currentY = e.touches[0].clientY;
             const diff = startY - currentY;
-            const touchThreshold = window.innerHeight * 0.01;
+            const touchThreshold = window.innerHeight * 0.1;
 
             if (!animationFrameId) {
                 animationFrameId = requestAnimationFrame(() => {
