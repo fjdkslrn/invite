@@ -775,18 +775,64 @@
             naverMapLink.href = `https://map.naver.com/p/search/${encodeURIComponent(MYERS_ANSAN_NAME)}?c=${MYERS_ANSAN_LNG},${MYERS_ANSAN_LAT},16,0,0,0,dh`;
         }
 
-        // 티맵 링크 설정 함수
+        // 티맵 링크 설정 함수 (앱 미설치 시 마켓으로 이동 로직 추가)
         function setTmapLink() {
             const tmapLink = document.getElementById('tmapLink');
-            const tmapUrl = `tmap://route?goalx=${MYERS_ANSAN_LNG}&goaly=${MYERS_ANSAN_LAT}&goalname=${encodeURIComponent(MYERS_ANSAN_NAME)}`;
-            tmapLink.href = tmapUrl;
+            const appStoreUrl = 'https://play.google.com/store/apps/details?id=com.skt.tmap.ku'; // Android 티맵 플레이스토어 링크
+            const iosAppStoreUrl = 'https://apps.apple.com/kr/app/%ED%8B%B0%EB%A7%B5-%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD-%EB%AA%A8%EB%B0%94%EC%9D%BC-%EB%82%B4%EB%B9%84%EA%B2%8C%EC%9D%B4%EC%85%98-%ED%8B%B0%EB%A7%B5/id431589179'; // iOS 티맵 앱스토어 링크
+            const tmapScheme = `tmap://route?goalx=${MYERS_ANSAN_LNG}&goaly=${MYERS_ANSAN_LAT}&goalname=${encodeURIComponent(MYERS_ANSAN_NAME)}`;
+
+            tmapLink.addEventListener('click', function(e) {
+                e.preventDefault(); // 기본 링크 동작 방지
+
+                let clickedAt = +new Date(); // 클릭 시간 기록
+
+                // 티맵 앱 시도
+                window.location.href = tmapScheme;
+
+                // 딜레이 후 앱이 실행되지 않았으면 스토어로 이동
+                setTimeout(function() {
+                    if (+new Date() - clickedAt < 2000) { // 2초 이내에 앱이 실행되지 않으면 (대략적인 값)
+                        if (navigator.userAgent.match(/android/i)) {
+                            window.location.href = appStoreUrl; // 안드로이드
+                        } else if (navigator.userAgent.match(/(iphone|ipad|ipod)/i)) {
+                            window.location.href = iosAppStoreUrl; // iOS
+                        } else {
+                            alert('티맵 앱이 설치되어 있지 않습니다. 모바일 기기에서 시도해주세요.'); // 기타 OS
+                        }
+                    }
+                }, 1000); // 1초 대기 후 판단
+            });
         }
 
-        // 카카오 지도 링크 설정 함수
+        // 카카오 지도 링크 설정 함수 (앱 미설치 시 마켓으로 이동 로직 추가)
         function setKakaoMapLink() {
             const kakaoMapLink = document.getElementById('kakaoMapLink');
-            const kakaoMapUrl = `kakaomap://look?p=${MYERS_ANSAN_LAT},${MYERS_ANSAN_LNG}`;
-            kakaoMapLink.href = kakaoMapUrl;
+            const appStoreUrl = 'https://play.google.com/store/apps/details?id=net.daum.android.map'; // Android 카카오맵 플레이스토어 링크
+            const iosAppStoreUrl = 'https://apps.apple.com/kr/app/%EC%B9%B4%EC%B9%B4%EC%98%A4%EB%A7%B5-%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD-%EB%AA%A8%EB%B0%94%EC%9D%BC-%ED%8C%8C%ED%8A%B8%EB%84%88/id304608425'; // iOS 카카오맵 앱스토어 링크
+            const kakaoScheme = `kakaomap://look?p=${MYERS_ANSAN_LAT},${MYERS_ANSAN_LNG}`;
+
+            kakaoMapLink.addEventListener('click', function(e) {
+                e.preventDefault(); // 기본 링크 동작 방지
+
+                let clickedAt = +new Date(); // 클릭 시간 기록
+
+                // 카카오맵 앱 시도
+                window.location.href = kakaoScheme;
+
+                // 딜레이 후 앱이 실행되지 않았으면 스토어로 이동
+                setTimeout(function() {
+                    if (+new Date() - clickedAt < 2000) { // 2초 이내에 앱이 실행되지 않으면 (대략적인 값)
+                        if (navigator.userAgent.match(/android/i)) {
+                            window.location.href = appStoreUrl; // 안드로이드
+                        } else if (navigator.userAgent.match(/(iphone|ipad|ipod)/i)) {
+                            window.location.href = iosAppStoreUrl; // iOS
+                        } else {
+                            alert('카카오맵 앱이 설치되어 있지 않습니다. 모바일 기기에서 시도해주세요.'); // 기타 OS
+                        }
+                    }
+                }, 1000); // 1초 대기 후 판단
+            });
         }
     </script>
 </body>
