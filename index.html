@@ -13,8 +13,7 @@
     <meta property="og:image:width" content="800">
     <meta property="og:image:height" content="400">
 
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <style>
         @font-face {
             font-family: 'GowunDodum-Regular';
@@ -89,9 +88,14 @@
             text-align: center;
             padding: 20px;
             border-radius: 20px;
-            /* 세리프 예시 */
+            /* ✨ 수정: 폰트 사용에 따라 font-family를 맞춰주세요. Playfair Display를 사용하려면 아래처럼. */
             font-family: 'Playfair Display', serif;
+            font-weight: bold;
             /* Playfair Display는 bold에서 고급스러움이 강조됩니다 */
+            /* 만약 Great Vibes를 사용하려면:
+            font-family: 'Great Vibes', cursive;
+            font-weight: normal;
+            */
         }
 
         .star-decoration {
@@ -287,6 +291,14 @@
             color: #ccc;
         }
 
+        .timeline-section {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
         .timeline-title {
             color: #ff9500;
             font-size: 18px;
@@ -354,18 +366,40 @@
             margin-bottom: 15px;
             position: relative;
             overflow: hidden;
-            /* ✨ 수정 사항: 지도가 로드되면 placeholder가 사라지도록 */
             display: flex;
-            /* placeholder를 중앙 정렬하기 위해 flex 사용 */
             justify-content: center;
             align-items: center;
         }
 
         .map-placeholder {
-            /* 지도 로딩 중 표시 */
             color: #666;
             text-align: center;
             font-size: 14px;
+        }
+
+        /* 지도 바로가기 링크 스타일 */
+        .map-links-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .map-link {
+            display: block;
+            padding: 8px 15px;
+            border: 1px solid #ff9500;
+            border-radius: 20px;
+            color: #ff9500;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .map-link:hover {
+            background-color: #fff9e6;
         }
 
         .scroll-indicator {
@@ -549,6 +583,28 @@
                 </div>
             </div>
 
+            <div class="timeline-section">
+                <div class="timeline-title">1년간의 성장일기</div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2023.12.14</div>
+                        <div class="timeline-content">처음 만난 날</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2024.07.30</div>
+                        <div class="timeline-content">세상에 태어난 날</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2024.09.17</div>
+                        <div class="timeline-content">50일</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2024.11.07</div>
+                        <div class="timeline-content">100일</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="map-section">
                 <div class="section-title">오시는 길</div>
                 <div class="map-container" id="map">
@@ -556,11 +612,21 @@
                         지도를 불러오는 중...
                     </div>
                 </div>
+                <div class="map-links-container">
+                    <a href="" id="naverMapLink" class="map-link" target="_blank">네이버 지도로 보기</a>
+                    <a href="" id="tmapLink" class="map-link" target="_blank">티맵에서 보기</a>
+                    <a href="" id="kakaoMapLink" class="map-link" target="_blank">카카오 지도에서 보기</a>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // ✨ 공통 위도, 경도, 장소명 변수 선언 (함수 밖으로 이동) ✨
+        const MYERS_ANSAN_LAT = 37.318977; // 위도
+        const MYERS_ANSAN_LNG = 126.819687; // 경도
+        const MYERS_ANSAN_NAME = '마이어스 안산';
+
         // 카운트다운 타이머
         function updateCountdown() {
             const targetDate = new Date('2025-07-26T11:30:00+09:00').getTime(); // 한국 시간(KST) +09:00 추가
@@ -650,47 +716,42 @@
                 }
             });
 
-            // ✨ 네이버 지도 초기화 함수 호출 (DOMContentLoaded 이후에 호출)
+            // 지도 관련 함수 호출 (MYERS_ANSAN_LAT, MYERS_ANSAN_LNG, MYERS_ANSAN_NAME은 이미 전역 변수로 선언됨)
             initNaverMap();
+            setTmapLink();
+            setKakaoMapLink();
+            setNaverMapWebLink(); // ✨ 추가: 네이버 지도로 보기 웹링크 설정 함수 호출
         });
 
 
-        // ✨ 네이버 지도 API 초기화 함수
+        // 네이버 지도 API 초기화 함수
         function initNaverMap() {
-            const mapContainer = document.getElementById('map'); // 지도를 표시할 div
+            const mapContainer = document.getElementById('map');
             const mapPlaceholder = mapContainer.querySelector('.map-placeholder');
 
-            // 마이어스 안산의 대략적인 위도, 경도 정보 (네이버 지도 검색을 통해 확인 가능)
-            // 정확한 좌표는 네이버 지도에서 '마이어스 안산' 검색 후, URL에서 lat, lng 값을 확인하거나
-            // 개발자 도구로 지도상의 정확한 위치를 클릭하여 얻을 수 있습니다.
-            const MYERS_ANSAN_LAT = 37.318977; // 예시 위도
-            const MYERS_ANSAN_LNG = 126.819687; // 예시 경도
-
             const mapOptions = {
-                center: new naver.maps.LatLng(MYERS_ANSAN_LAT, MYERS_ANSAN_LNG), // 중심 좌표
-                zoom: 16, // 지도 확대 레벨 (1~21)
-                minZoom: 10, // 지도의 최소 줌 레벨
-                maxZoom: 18, // 지도의 최대 줌 레벨
-                scaleControl: true, // 스케일 컨트롤 표시
-                mapDataControl: true, // 지도 데이터 저작권 컨트롤 표시
-                zoomControl: true, // 줌 컨트롤 표시
-                zoomControlOptions: { // 줌 컨트롤 옵션
+                center: new naver.maps.LatLng(MYERS_ANSAN_LAT, MYERS_ANSAN_LNG),
+                zoom: 16,
+                minZoom: 10,
+                maxZoom: 18,
+                scaleControl: true,
+                mapDataControl: true,
+                zoomControl: true,
+                zoomControlOptions: {
                     position: naver.maps.Position.TOP_RIGHT
                 }
             };
 
             const map = new naver.maps.Map(mapContainer, mapOptions);
 
-            // 마커 추가
             const marker = new naver.maps.Marker({
                 position: new naver.maps.LatLng(MYERS_ANSAN_LAT, MYERS_ANSAN_LNG),
                 map: map,
-                title: '마이어스 안산'
+                title: MYERS_ANSAN_NAME
             });
 
-            // 정보창 추가 (마커 클릭 시)
             const infowindow = new naver.maps.InfoWindow({
-                content: '<div style="padding:10px; width:150px; text-align:center;"><b>마이어스 안산</b><br>이태연 돌잔치 장소</div>'
+                content: `<div style="padding:10px; width:150px; text-align:center;"><b>${MYERS_ANSAN_NAME}</b><br>이태연 돌잔치 장소</div>`
             });
 
             naver.maps.Event.addListener(marker, "click", function (e) {
@@ -701,26 +762,31 @@
                 }
             });
 
-            // 지도가 로드되면 placeholder 숨김
             map.addListener('tilesloaded', function () {
                 if (mapPlaceholder) {
                     mapPlaceholder.style.display = 'none';
                 }
             });
+        }
 
-            // 지도 중앙에 위치시키는 버튼 또는 링크 추가 (선택 사항)
-            // 지도 아래에 "지도에서 보기" 링크를 추가하여 클릭 시 네이버 지도로 이동
-            const mapLink = document.createElement('a');
-            mapLink.href = `https://map.naver.com/p/search/%EB%A7%88%EC%9D%B4%EC%96%B4%EC%8A%A4%20%EC%95%88%EC%82%B0?c=${MYERS_ANSAN_LNG},${MYERS_ANSAN_LAT},16,0,0,0,dh`;
-            mapLink.target = '_blank';
-            mapLink.textContent = '네이버 지도로 보기';
-            mapLink.style.display = 'block';
-            mapLink.style.textAlign = 'center';
-            mapLink.style.marginTop = '10px';
-            mapLink.style.color = '#ff9500';
-            mapLink.style.textDecoration = 'underline';
-            mapLink.style.fontSize = '14px';
-            mapContainer.parentNode.appendChild(mapLink);
+        // ✨ 추가: 네이버 웹 지도 링크 설정 함수 (initNaverMap에서 분리)
+        function setNaverMapWebLink() {
+            const naverMapLink = document.getElementById('naverMapLink');
+            naverMapLink.href = `https://map.naver.com/p/search/${encodeURIComponent(MYERS_ANSAN_NAME)}?c=${MYERS_ANSAN_LNG},${MYERS_ANSAN_LAT},16,0,0,0,dh`;
+        }
+
+        // 티맵 링크 설정 함수
+        function setTmapLink() {
+            const tmapLink = document.getElementById('tmapLink');
+            const tmapUrl = `tmap://route?goalx=${MYERS_ANSAN_LNG}&goaly=${MYERS_ANSAN_LAT}&goalname=${encodeURIComponent(MYERS_ANSAN_NAME)}`;
+            tmapLink.href = tmapUrl;
+        }
+
+        // 카카오 지도 링크 설정 함수
+        function setKakaoMapLink() {
+            const kakaoMapLink = document.getElementById('kakaoMapLink');
+            const kakaoMapUrl = `kakaomap://look?p=${MYERS_ANSAN_LAT},${MYERS_ANSAN_LNG}`;
+            kakaoMapLink.href = kakaoMapUrl;
         }
     </script>
 </body>
