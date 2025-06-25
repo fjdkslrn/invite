@@ -50,7 +50,7 @@
             align-items: center;
             position: relative;
             /* opacity 외에 transform도 함께 transition 적용 */
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transition: opacity 0.5s ease, transform 0.5s ease; 
             padding-top: 100px;
             justify-content: flex-start;
         }
@@ -91,7 +91,6 @@
             border-radius: 20px;
             font-family: 'Playfair Display', serif;
             font-weight: bold;
-            /* text-shadow 제거됨 */
         }
 
         .star-decoration {
@@ -399,7 +398,7 @@
             background-color: #fff9e6;
         }
 
-        /* 스크롤 인디케이터 스타일 다시 추가 */
+        /* 스크롤 인디케이터 스타일 */
         .scroll-indicator {
             position: fixed;
             bottom: 30px;
@@ -534,7 +533,7 @@
                         <div class="calendar-header">화</div>
                         <div class="calendar-header">수</div>
                         <div class="calendar-header">목</div>
-                        <div class="calendar-header">금</div>
+                        <div class="calendar-day">금</div>
                         <div class="calendar-day">토</div>
 
                         <div class="calendar-day other-month">29</div>
@@ -635,7 +634,8 @@
 
         function handleScrollEffect() {
             const scrollY = window.scrollY;
-            const threshold = window.innerHeight * 0.7; // 이 값을 조절하여 테스트 해보세요. (0.3 ~ 0.7 사이)
+            // 스크롤을 시작하는 거의 즉시 전환되도록 임계값을 매우 작게 설정
+            const threshold = 1; // 1px 스크롤되면 전환 시작. 0.001 * window.innerHeight 로 설정해도 됨.
 
             if (scrollY > threshold) {
                 coverPage.classList.add('fade-out');
@@ -662,7 +662,8 @@
         document.addEventListener('touchmove', (e) => {
             const currentY = e.touches[0].clientY;
             const diff = startY - currentY;
-            const touchThreshold = window.innerHeight * 0.7; // 위 threshold 값과 동일하게 유지
+            // 터치 스크롤 임계값도 동일하게 매우 작게 설정
+            const touchThreshold = 1; // 1px 터치 스크롤되면 전환 시작. 0.001 * window.innerHeight 로 설정해도 됨.
 
             if (!animationFrameId) {
                 animationFrameId = requestAnimationFrame(() => {
