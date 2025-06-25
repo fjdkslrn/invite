@@ -641,7 +641,7 @@
 
         function handleScrollEffect() {
             const scrollY = window.scrollY;
-            const threshold = window.innerHeight * 0.1;
+            const threshold = window.innerHeight * 0.05;
 
             if (scrollY > threshold) {
                 coverPage.classList.add('fade-out');
@@ -668,7 +668,7 @@
         document.addEventListener('touchmove', (e) => {
             const currentY = e.touches[0].clientY;
             const diff = startY - currentY;
-            const touchThreshold = window.innerHeight * 0.05;
+            const touchThreshold = window.innerHeight * 0.01;
 
             if (!animationFrameId) {
                 animationFrameId = requestAnimationFrame(() => {
