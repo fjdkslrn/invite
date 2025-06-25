@@ -31,6 +31,8 @@
         body {
             font-family: 'GowunDodum-Regular', sans-serif;
             background: #f8f8f8;
+            /* 스크롤바를 숨겨서 의도치 않은 스크롤이 보이지 않도록 함 */
+            overflow-x: hidden; 
         }
 
         .container {
@@ -49,9 +51,8 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            /* opacity 외에 transform도 함께 transition 적용 */
-            /* 이제 transition은 자바스크립트에서 제어할 예정이므로 잠시 제거하거나, 부드러운 시작을 위해 짧게 유지 */
-            transition: opacity 0.3s ease, transform 0.3s ease; /* 전환 시간을 짧게 조정 */
+            /* 전환 시간을 늘려 더 부드럽게 */
+            transition: opacity 0.8s ease, transform 0.8s ease; 
             padding-top: 100px;
             justify-content: flex-start;
         }
@@ -123,8 +124,9 @@
             min-height: 100vh;
             background: #f8f8f8;
             padding: 40px 20px;
+            /* 초기 위치를 뷰포트 아래로 설정 */
             transform: translateY(100vh);
-            transition: transform 0.5s ease;
+            transition: transform 0.8s ease; /* 전환 시간을 cover-page와 맞춤 */
         }
 
         .detail-page.active {
@@ -427,22 +429,21 @@
             }
         }
 
-        /* 스크롤 효과 (스크롤 중에는 opacity 변화, 스크롤 멈추면 완전히 전환) */
-        .cover-page.scrolling {
-            opacity: 0.2; /* 스크롤 중에는 살짝만 투명하게 */
-            transform: translateY(-20px); /* 스크롤 중에는 살짝만 위로 이동 */
+        /* 스크롤 효과 - 새로운 클래스 및 개선 */
+        .cover-page.fade-progress {
+            /* 스크롤량에 따라 opacity와 transform을 JS로 직접 제어 */
+            /* CSS transition은 기본 상태와 최종 상태에만 적용되도록 함 */
         }
 
-        .cover-page.scrolled-out {
+        .cover-page.hidden {
             opacity: 0;
             pointer-events: none;
             transform: translateY(-100vh); /* 완전히 위로 밀어 올려서 안 보이게 함 */
         }
 
-        .detail-page.scrolled-in {
+        .detail-page.active-full {
             transform: translateY(0);
         }
-
 
         @media (max-width: 480px) {
             .container {
@@ -641,98 +642,82 @@
         const coverPage = document.getElementById('coverPage');
         const detailPage = document.getElementById('detailPage');
         let scrollTimeout; // 스크롤 종료 감지를 위한 타이머 변수
-        let isTransitioning = false; // 전환 중인지 여부 플래그
+        let lastScrollY = 0; // 마지막 스크롤 Y 위치
+        let isTransitionFinished = false; // 전환이 완전히 완료되었는지 여부
 
-        // 스크롤 이벤트 핸들러
-        function handleScroll() {
-            if (isTransitioning) return; // 전환 중이면 다시 트리거하지 않음
+        // 스크롤(터치) 시작 감지 변수
+        let isScrolling = false;
 
-            const scrollY = window.scrollY;
-
-            // 스크롤 시작 시 cover-page에 'scrolling' 클래스 추가
-            // 이 클래스에 opacity와 transform 값을 조절하여 스크롤 중의 부드러운 효과를 줍니다.
-            if (scrollY > 0 && !coverPage.classList.contains('scrolling') && !coverPage.classList.contains('scrolled-out')) {
-                coverPage.classList.add('scrolling');
-            } else if (scrollY === 0 && coverPage.classList.contains('scrolling')) {
-                coverPage.classList.remove('scrolling');
+        function handleScrollStart() {
+            if (!isScrolling) {
+                isScrolling = true;
+                coverPage.style.transition = 'none'; // 스크롤 시작 시 transition 잠시 끔
+                detailPage.style.transition = 'none'; // detail-page도 함께 끔
             }
-
-            // 스크롤 종료 시 최종 전환을 위한 타이머 초기화
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                // 스크롤이 끝났을 때
-                if (scrollY > 10) { // 최소한의 스크롤 (10px)이 있었을 때만 전환
-                    isTransitioning = true;
-                    coverPage.classList.remove('scrolling'); // 스크롤 중 효과 제거
-                    coverPage.classList.add('scrolled-out'); // 완전히 사라지는 클래스 추가
-                    detailPage.classList.add('scrolled-in'); // detail-page 활성화
-
-                    // 전환 애니메이션이 끝난 후 isTransitioning 플래그 초기화
-                    // cover-page의 transition 시간을 따라가도록 설정 (0.3s)
-                    setTimeout(() => {
-                        isTransitioning = false;
-                        // 필요하다면 coverPage의 display: none 처리 (레이아웃에서 완전히 제거)
-                        // coverPage.style.display = 'none'; // 스크롤 복귀 시 문제가 될 수 있어 일반적으로 권장하지 않음
-                    }, 500); // CSS transition 시간보다 약간 길게 설정
-                } else if (scrollY === 0) {
-                     // 맨 위로 스크롤 복귀 시
-                     coverPage.classList.remove('scrolled-out');
-                     detailPage.classList.remove('scrolled-in');
-                     coverPage.classList.remove('scrolling');
-                }
-            }, 150); // 150ms 동안 스크롤이 없으면 스크롤 종료로 판단 (조절 가능)
         }
 
-        window.addEventListener('scroll', handleScroll);
+        function handleScrollEnd() {
+            if (isScrolling) {
+                isScrolling = false;
+                coverPage.style.transition = 'opacity 0.8s ease, transform 0.8s ease'; // transition 다시  움
+                detailPage.style.transition = 'transform 0.8s ease'; // detail-page transition 다시  움
 
+                const currentScrollY = window.scrollY;
+                if (currentScrollY > 10 && !isTransitionFinished) { // 스크롤이 충분히 발생했고, 아직 전환 안 됐으면
+                    coverPage.classList.add('hidden');
+                    detailPage.classList.add('active-full');
 
-        let startY = 0; // 터치 시작 Y 좌표
-        let touchMoveTimer; // 터치 이동 종료 감지 타이머
+                    // detailPage의 상단이 화면의 상단에 오도록 스크롤 위치 조정
+                    window.scrollTo({
+                        top: detailPage.offsetTop, // detailPage의 시작 위치로 스크롤
+                        behavior: 'smooth' // 부드럽게 스크롤
+                    });
 
-        document.addEventListener('touchstart', (e) => {
-            startY = e.touches[0].clientY;
-            clearTimeout(touchMoveTimer); // 새로운 터치 시작 시 기존 타이머 초기화
+                    isTransitionFinished = true; // 전환 완료 플래그 설정
+                } else if (currentScrollY <= 10 && isTransitionFinished) { // 다시 맨 위로 복귀 시
+                    coverPage.classList.remove('hidden');
+                    detailPage.classList.remove('active-full');
+                    isTransitionFinished = false; // 플래그 초기화
+                }
+            }
+        }
+
+        // 스크롤 이벤트 핸들러
+        window.addEventListener('scroll', () => {
+            handleScrollStart(); // 스크롤 시작 감지
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(handleScrollEnd, 150); // 150ms 동안 스크롤 없으면 종료로 판단
+            
+            // 스크롤 중 커버 페이지의 투명도와 위치 조절 (점진적 변화)
+            const scrollProgress = Math.min(1, window.scrollY / (window.innerHeight * 0.5)); // 뷰포트 높이의 50%까지 진행도 계산
+            coverPage.style.opacity = 1 - scrollProgress; // 0% 스크롤 시 1, 50% 스크롤 시 0
+            coverPage.style.transform = `translateY(${scrollProgress * -50}px)`; // -50px까지 이동
         });
+
+        // 터치 이벤트 핸들러 (scroll 이벤트와 연동되므로 간단히 처리)
+        let initialTouchY = 0;
+        document.addEventListener('touchstart', (e) => {
+            initialTouchY = e.touches[0].clientY;
+            handleScrollStart(); // 터치 시작 시 스크롤 시작 감지
+        }, { passive: false }); // passive: false를 추가하여 preventDefault 가능성 열어둠 (필요시)
 
         document.addEventListener('touchmove', (e) => {
-            if (isTransitioning) return;
+            // 이벤트를 window.scrollY로 위임하여 처리
+            // 별도의 touchmove 전환 로직은 handleScroll에서 이미 처리되므로 최소화
+            const currentTouchY = e.touches[0].clientY;
+            const diff = initialTouchY - currentTouchY;
 
-            const currentY = e.touches[0].clientY;
-            const diff = startY - currentY; // 위로 스크롤 시 양수
+            // 아래로 스크롤 시 (diff 음수) detail-page가 따라 올라오지 않도록 방지
+            // if (diff < 0 && window.scrollY === 0) {
+            //     e.preventDefault(); // 맨 위에서 아래로 당기는 스크롤 방지
+            // }
 
-            if (diff > 5 && !coverPage.classList.contains('scrolling') && !coverPage.classList.contains('scrolled-out')) { // 5px 이상 스크롤
-                coverPage.classList.add('scrolling');
-            } else if (diff <= 0 && coverPage.classList.contains('scrolling')) {
-                // 아래로 스크롤하거나 터치 위치가 올라가면 scrolling 클래스 제거
-                coverPage.classList.remove('scrolling');
-            }
+            clearTimeout(scrollTimeout); // 터치 이동 중에도 스크롤 종료 타이머 초기화
+            scrollTimeout = setTimeout(handleScrollEnd, 150); // 터치 종료 시에도 스크롤 종료 감지
+        }, { passive: false });
 
-            // 터치 이동 종료 시 최종 전환을 위한 타이머 초기화
-            clearTimeout(touchMoveTimer);
-            touchMoveTimer = setTimeout(() => {
-                // 터치 이동이 끝났을 때
-                if (diff > 5) { // 충분히 스크롤 (5px)이 있었을 때만 전환
-                    isTransitioning = true;
-                    coverPage.classList.remove('scrolling'); // 스크롤 중 효과 제거
-                    coverPage.classList.add('scrolled-out'); // 완전히 사라지는 클래스 추가
-                    detailPage.classList.add('scrolled-in'); // detail-page 활성화
-
-                    setTimeout(() => {
-                        isTransitioning = false;
-                    }, 500); // CSS transition 시간보다 약간 길게 설정
-                } else if (diff <= 0) { // 위로 스크롤이 아니거나, 맨 위로 복귀할 때
-                     coverPage.classList.remove('scrolled-out');
-                     detailPage.classList.remove('scrolled-in');
-                     coverPage.classList.remove('scrolling');
-                }
-            }, 150); // 150ms 동안 터치 이동이 없으면 터치 종료로 판단
-        });
-
-        // 사용자가 화면에서 손을 떼는 순간 (터치 종료) 처리
         document.addEventListener('touchend', () => {
-            clearTimeout(touchMoveTimer); // touchend 시에는 바로 타이머 초기화 (scrollTimeout은 scroll 이벤트에서 따로 관리)
-            // touchend 시에도 최종 전환 로직을 한 번 더 강제 실행하여 확실하게 전환되도록 함
-            handleScroll(); // 현재 스크롤 위치를 기반으로 전환 결정
+            handleScrollEnd(); // 손을 떼는 순간 스크롤 종료 처리
         });
 
 
