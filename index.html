@@ -49,7 +49,8 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            transition: opacity 0.5s ease;
+            /* opacity 외에 transform도 함께 transition 적용 */
+            transition: opacity 0.5s ease, transform 0.5s ease; 
             padding-top: 100px;
             justify-content: flex-start;
         }
@@ -88,14 +89,9 @@
             text-align: center;
             padding: 20px;
             border-radius: 20px;
-            /* ✨ 수정: 폰트 사용에 따라 font-family를 맞춰주세요. Playfair Display를 사용하려면 아래처럼. */
             font-family: 'Playfair Display', serif;
             font-weight: bold;
-            /* Playfair Display는 bold에서 고급스러움이 강조됩니다 */
-            /* 만약 Great Vibes를 사용하려면:
-            font-family: 'Great Vibes', cursive;
-            font-weight: normal;
-            */
+            /* text-shadow 제거됨 */
         }
 
         .star-decoration {
@@ -355,7 +351,8 @@
             padding: 30px 20px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 40px; /* 갤러리 섹션과 간격 추가 */
+            /* 갤러리 섹션 제거로 인해 margin-bottom 조정이 필요 없을 수 있음 */
+            margin-bottom: 40px; 
         }
 
         /* 지도 컨테이너 기본 스타일 */
@@ -403,131 +400,12 @@
             background-color: #fff9e6;
         }
 
-        /* 갤러리 섹션 스타일 */
-        .gallery-section {
-            background: white;
-            padding: 30px 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 40px;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2열로 배치 */
-            gap: 15px; /* 사진 간 간격 */
-        }
-
-        .gallery-item {
-            position: relative;
-            width: 100%;
-            padding-bottom: 100%; /* 정사각형 유지 (높이를 너비에 비례) */
-            overflow: hidden;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .gallery-item img {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 이미지가 잘리지 않고 채워지도록 */
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item img:hover {
-            transform: scale(1.05); /* 마우스 오버 시 약간 확대 효과 */
-        }
-
-        /* 모달 스타일 */
-        .modal {
-            display: none; /* 기본적으로 숨김 */
-            position: fixed; /* 전체 화면 덮기 */
-            z-index: 1000; /* 다른 요소 위에 표시 */
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto; /* 내용이 넘칠 경우 스크롤 */
-            background-color: rgba(0, 0, 0, 0.8); /* 반투명 검은 배경 */
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s forwards;
-        }
-
-        .modal-content {
-            margin: auto;
-            display: block;
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain; /* 이미지 전체가 보이도록 조정 */
-            animation: zoomIn 0.3s forwards;
-        }
-
-        .close-button {
-            position: absolute;
-            top: 15px;
-            right: 25px;
-            color: #f1f1f1;
-            font-size: 40px;
-            font-weight: bold;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-        .close-button:hover,
-        .close-button:focus {
-            color: #bbb;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        /* 모달 애니메이션 */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes zoomIn {
-            from { transform: scale(0.8); }
-            to { transform: scale(1); }
-        }
-
-        .scroll-indicator {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ff9500;
-            font-size: 12px;
-            animation: bounce 2s infinite;
-            z-index: 100;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            20%,
-            50%,
-            80%,
-            100% {
-                transform: translateX(-50%) translateY(0);
-            }
-
-            40% {
-                transform: translateX(-50%) translateY(-10px);
-            }
-
-            60% {
-                transform: translateX(-50%) translateY(-5px);
-            }
-        }
-
         /* 스크롤 효과 */
         .fade-out {
             opacity: 0;
             pointer-events: none;
+            /* opacity와 함께 위로 살짝 이동하는 효과 추가 */
+            transform: translateY(-50px); /* 50px 위로 이동하면서 사라짐 */
         }
 
         @media (max-width: 480px) {
@@ -545,11 +423,6 @@
 
             .cover-title {
                 top: 30px;
-            }
-
-            /* 모바일에서 갤러리 3열로 */
-            .gallery-grid {
-                grid-template-columns: repeat(3, 1fr);
             }
         }
     </style>
@@ -693,39 +566,7 @@
                     <a href="" id="kakaoMapLink" class="map-link" target="_blank">카카오 지도에서 보기</a>
                 </div>
             </div>
-
-            <div class="gallery-section">
-                <div class="section-title">우리아이 사진</div>
-                <div class="gallery-grid">
-                    <div class="gallery-item">
-                        <img src="main.jpg" alt="아기 사진 1">
-                    </div>
-                    <div class="gallery-item">
-                        <img src="main.jpg" alt="아기 사진 2">
-                    </div>
-                    <div class="gallery-item">
-                        <img src="main.jpg" alt="아기 사진 3">
-                    </div>
-                    <div class="gallery-item">
-                        <img src="thumbnail.jpg" alt="아기 사진 4">
-                    </div>
-                    <div class="gallery-item">
-                        <img src="thumbnail.jpg" alt="아기 사진 5">
-                    </div>
-                    <div class="gallery-item">
-                        <img src="thumbnail.jpg" alt="아기 사진 6">
-                    </div>
-                </div>
-            </div>
-            </div>
-    </div>
-
-    <div id="imageModal" class="modal">
-        <span class="close-button">&times;</span>
-        <img class="modal-content" id="modalImage">
-    </div>
-
-    <script>
+            </div> </div> <script>
         // ✨ 공통 위도, 경도, 장소명 변수 선언 (함수 밖으로 이동) ✨
         const MYERS_ANSAN_LAT = 37.318977; // 위도
         const MYERS_ANSAN_LNG = 126.819687; // 경도
@@ -767,7 +608,7 @@
 
         function handleScrollEffect() {
             const scrollY = window.scrollY;
-            const threshold = window.innerHeight * 0.1; // 첫 페이지가 더 오래 보이도록 임계값 조절 (30%)
+            const threshold = window.innerHeight * 0.5; // 이 값을 조절하여 테스트 해보세요. (0.3 ~ 0.7 사이)
 
             if (scrollY > threshold) {
                 coverPage.classList.add('fade-out');
@@ -794,7 +635,7 @@
         document.addEventListener('touchmove', (e) => {
             const currentY = e.touches[0].clientY;
             const diff = startY - currentY;
-            const touchThreshold = window.innerHeight * 0.05; // 터치 스크롤 임계값도 동일하게 조절
+            const touchThreshold = window.innerHeight * 0.5; // 위 threshold 값과 동일하게 유지
 
             if (!animationFrameId) {
                 animationFrameId = requestAnimationFrame(() => {
@@ -826,8 +667,8 @@
             setKakaoMapLink();
             setNaverMapWebLink();
 
-            // 갤러리 모달 설정 함수 호출
-            setupGalleryModal();
+            // 갤러리 모달 설정 함수 호출 (제거됨)
+            // setupGalleryModal();
         });
 
 
@@ -939,33 +780,6 @@
                         }
                     }
                 }, 1000); // 1초 대기 후 판단
-            });
-        }
-
-        // 갤러리 모달 설정 함수
-        function setupGalleryModal() {
-            const modal = document.getElementById("imageModal");
-            const modalImage = document.getElementById("modalImage");
-            const closeButton = document.getElementsByClassName("close-button")[0];
-            const galleryItems = document.querySelectorAll(".gallery-item img");
-
-            galleryItems.forEach(item => {
-                item.addEventListener("click", function() {
-                    modal.style.display = "flex"; // flex로 설정하여 내부 요소를 중앙 정렬
-                    modalImage.src = this.src; // 클릭된 이미지의 src를 모달 이미지에 설정
-                });
-            });
-
-            // 닫기 버튼 클릭 시 모달 닫기
-            closeButton.addEventListener("click", function() {
-                modal.style.display = "none";
-            });
-
-            // 모달 배경 클릭 시 모달 닫기
-            modal.addEventListener("click", function(e) {
-                if (e.target === modal) { // 모달 배경을 직접 클릭했을 때만 닫기
-                    modal.style.display = "none";
-                }
             });
         }
     </script>
