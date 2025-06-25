@@ -159,7 +159,6 @@
             color: #333;
             line-height: 1.8;
             font-size: 14px;
-            font-weight: bold;
         }
 
         .save-date-section {
@@ -209,7 +208,6 @@
         .countdown-message {
             color: #333;
             font-size: 14px;
-            font-weight: bold;
         }
 
         .countdown-highlight {
@@ -357,6 +355,7 @@
             padding: 30px 20px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px; /* 갤러리 섹션과 간격 추가 */
         }
 
         /* 지도 컨테이너 기본 스타일 */
@@ -402,6 +401,97 @@
 
         .map-link:hover {
             background-color: #fff9e6;
+        }
+
+        /* 갤러리 섹션 스타일 */
+        .gallery-section {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2열로 배치 */
+            gap: 15px; /* 사진 간 간격 */
+        }
+
+        .gallery-item {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%; /* 정사각형 유지 (높이를 너비에 비례) */
+            overflow: hidden;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 이미지가 잘리지 않고 채워지도록 */
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item img:hover {
+            transform: scale(1.05); /* 마우스 오버 시 약간 확대 효과 */
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none; /* 기본적으로 숨김 */
+            position: fixed; /* 전체 화면 덮기 */
+            z-index: 1000; /* 다른 요소 위에 표시 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* 내용이 넘칠 경우 스크롤 */
+            background-color: rgba(0, 0, 0, 0.8); /* 반투명 검은 배경 */
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain; /* 이미지 전체가 보이도록 조정 */
+            animation: zoomIn 0.3s forwards;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 모달 애니메이션 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); }
+            to { transform: scale(1); }
         }
 
         .scroll-indicator {
@@ -456,6 +546,11 @@
             .cover-title {
                 top: 30px;
             }
+
+            /* 모바일에서 갤러리 3열로 */
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
     </style>
 
@@ -476,7 +571,7 @@
             <div class="event-info-cover">
                 <div class="event-date-cover">🧡 이태연 🧡</div>
                 <div class="event-date-cover">25.07.26 | 11:30</div>
-                <div class="event-location-cover">마이어스 안산</div>
+                <div class="event-location-cover">마이어스 안산_사랑채홀</div>
             </div>
 
             <div class="scroll-indicator">
@@ -598,7 +693,36 @@
                     <a href="" id="kakaoMapLink" class="map-link" target="_blank">카카오 지도에서 보기</a>
                 </div>
             </div>
-        </div>
+
+            <div class="gallery-section">
+                <div class="section-title">우리아이 사진</div>
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="main.jpg" alt="아기 사진 1">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="main.jpg" alt="아기 사진 2">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="main.jpg" alt="아기 사진 3">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="thumbnail.jpg" alt="아기 사진 4">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="thumbnail.jpg" alt="아기 사진 5">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="thumbnail.jpg" alt="아기 사진 6">
+                    </div>
+                </div>
+            </div>
+            </div>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <span class="close-button">&times;</span>
+        <img class="modal-content" id="modalImage">
     </div>
 
     <script>
@@ -643,7 +767,7 @@
 
         function handleScrollEffect() {
             const scrollY = window.scrollY;
-            const threshold = window.innerHeight * 0.5;
+            const threshold = window.innerHeight * 0.1; // 첫 페이지가 더 오래 보이도록 임계값 조절 (30%)
 
             if (scrollY > threshold) {
                 coverPage.classList.add('fade-out');
@@ -670,7 +794,7 @@
         document.addEventListener('touchmove', (e) => {
             const currentY = e.touches[0].clientY;
             const diff = startY - currentY;
-            const touchThreshold = window.innerHeight * 0.1;
+            const touchThreshold = window.innerHeight * 0.05; // 터치 스크롤 임계값도 동일하게 조절
 
             if (!animationFrameId) {
                 animationFrameId = requestAnimationFrame(() => {
@@ -696,11 +820,14 @@
                 }
             });
 
-            // 지도 관련 함수 호출 (MYERS_ANSAN_LAT, MYERS_ANSAN_LNG, MYERS_ANSAN_NAME은 이미 전역 변수로 선언됨)
+            // 지도 관련 함수 호출
             initNaverMap();
             setTmapLink();
             setKakaoMapLink();
-            setNaverMapWebLink(); // ✨ 추가: 네이버 지도로 보기 웹링크 설정 함수 호출
+            setNaverMapWebLink();
+
+            // 갤러리 모달 설정 함수 호출
+            setupGalleryModal();
         });
 
 
@@ -749,7 +876,7 @@
             });
         }
 
-        // ✨ 추가: 네이버 웹 지도 링크 설정 함수 (initNaverMap에서 분리)
+        // 네이버 웹 지도 링크 설정 함수
         function setNaverMapWebLink() {
             const naverMapLink = document.getElementById('naverMapLink');
             naverMapLink.href = `https://map.naver.com/p/search/${encodeURIComponent(MYERS_ANSAN_NAME)}?c=${MYERS_ANSAN_LNG},${MYERS_ANSAN_LAT},16,0,0,0,dh`;
@@ -812,6 +939,33 @@
                         }
                     }
                 }, 1000); // 1초 대기 후 판단
+            });
+        }
+
+        // 갤러리 모달 설정 함수
+        function setupGalleryModal() {
+            const modal = document.getElementById("imageModal");
+            const modalImage = document.getElementById("modalImage");
+            const closeButton = document.getElementsByClassName("close-button")[0];
+            const galleryItems = document.querySelectorAll(".gallery-item img");
+
+            galleryItems.forEach(item => {
+                item.addEventListener("click", function() {
+                    modal.style.display = "flex"; // flex로 설정하여 내부 요소를 중앙 정렬
+                    modalImage.src = this.src; // 클릭된 이미지의 src를 모달 이미지에 설정
+                });
+            });
+
+            // 닫기 버튼 클릭 시 모달 닫기
+            closeButton.addEventListener("click", function() {
+                modal.style.display = "none";
+            });
+
+            // 모달 배경 클릭 시 모달 닫기
+            modal.addEventListener("click", function(e) {
+                if (e.target === modal) { // 모달 배경을 직접 클릭했을 때만 닫기
+                    modal.style.display = "none";
+                }
             });
         }
     </script>
