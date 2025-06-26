@@ -31,8 +31,8 @@
         body {
             font-family: 'GowunDodum-Regular', sans-serif;
             background: #f8f8f8;
-            /* 스크롤바를 숨겨서 의도치 않은 스크롤이 보이지 않도록 함 */
-            overflow-x: hidden; 
+            overflow-x: hidden;
+            /* 가로 스크롤바 숨김 */
         }
 
         .container {
@@ -51,8 +51,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            /* 전환 시간을 늘려 더 부드럽게 */
-            transition: opacity 0.8s ease, transform 0.8s ease; 
+            transition: opacity 0.8s ease, transform 0.8s ease;
             padding-top: 100px;
             justify-content: flex-start;
         }
@@ -124,9 +123,8 @@
             min-height: 100vh;
             background: #f8f8f8;
             padding: 40px 20px;
-            /* 초기 위치를 뷰포트 아래로 설정 */
             transform: translateY(100vh);
-            transition: transform 0.8s ease; /* 전환 시간을 cover-page와 맞춤 */
+            transition: transform 0.8s ease;
         }
 
         .detail-page.active {
@@ -289,64 +287,60 @@
             color: #ccc;
         }
 
-        .timeline-section {
+        /* ✨ 아기 사진 갤러리 섹션 스타일 */
+        .photo-gallery-section {
             background: white;
             padding: 30px 20px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 40px;
-        }
-
-        .timeline-title {
-            color: #ff9500;
-            font-size: 18px;
-            font-weight: bold;
             text-align: center;
-            margin-bottom: 30px;
         }
 
-        .timeline {
+        .photo-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* 기본 2열. 아래에서 3열로 오버라이드할 예정 */
+            gap: 10px;
+            /* 이미지 간 간격 */
+            margin-top: 20px;
+        }
+
+        .photo-gallery-grid.grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .photo-gallery-grid.grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .photo-item {
             position: relative;
-            padding-left: 30px;
+            width: 100%;
+            padding-bottom: 100%;
+            /* 1:1 비율 유지 */
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .timeline::before {
-            content: '';
+        .photo-item img {
             position: absolute;
-            left: 15px;
             top: 0;
-            bottom: 0;
-            width: 2px;
-            background: #ff9500;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* 이미지가 잘리지 않고 비율에 맞게 채워지도록 */
+            transition: transform 0.2s ease;
         }
 
-        .timeline-item {
-            position: relative;
-            margin-bottom: 30px;
+        .photo-item:hover img {
+            transform: scale(1.05);
+            /* 호버 시 확대 효과 */
         }
 
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -23px;
-            top: 5px;
-            width: 8px;
-            height: 8px;
-            background: #ff9500;
-            border-radius: 50%;
-        }
-
-        .timeline-date {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .timeline-content {
-            font-size: 14px;
-            color: #333;
-            font-weight: bold;
-        }
 
         .map-section {
             background: white;
@@ -414,6 +408,7 @@
         }
 
         @keyframes bounce {
+
             0%,
             20%,
             50%,
@@ -421,9 +416,11 @@
             100% {
                 transform: translateX(-50%) translateY(0);
             }
+
             40% {
                 transform: translateX(-50%) translateY(-10px);
             }
+
             60% {
                 transform: translateX(-50%) translateY(-5px);
             }
@@ -438,12 +435,93 @@
         .cover-page.hidden {
             opacity: 0;
             pointer-events: none;
-            transform: translateY(-100vh); /* 완전히 위로 밀어 올려서 안 보이게 함 */
+            transform: translateY(-100vh);
+            /* 완전히 위로 밀어 올려서 안 보이게 함 */
         }
 
         .detail-page.active-full {
             transform: translateY(0);
         }
+
+        /* ✨ 모달 (Lightbox) 스타일 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            /* 이미지 전체가 보이도록 */
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            z-index: 1001;
+            padding: 10px;
+        }
+
+        .modal-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1001;
+            border-radius: 5px;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-nav-btn:hover {
+            opacity: 1;
+        }
+
+        .modal-nav-btn.prev {
+            left: 15px;
+        }
+
+        .modal-nav-btn.next {
+            right: 15px;
+        }
+
 
         @media (max-width: 480px) {
             .container {
@@ -461,10 +539,21 @@
             .cover-title {
                 top: 30px;
             }
+
+            .modal-nav-btn {
+                padding: 5px 10px;
+                font-size: 20px;
+            }
+
+            .modal-close-btn {
+                font-size: 24px;
+                top: 10px;
+                right: 10px;
+            }
         }
     </style>
 
-    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=78supwc81k"></script>
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=78supwc81k"></script>
 </head>
 
 <body>
@@ -499,7 +588,7 @@
                     어느덧 첫번째 생일을 맞이하였습니다.<br><br>
                     사랑과 관심으로 지켜봐주신 소중한 분들께<br>
                     감사의 마음으로 작은 자리를 마련하였습니다.<br><br>
-                    뜻깊은 날에 소중한 발걸음 하시어<br>
+                    뜻깊은 날에 소중한 발걸음하시어<br>
                     함께해 주시면 감사하겠습니다.
                 </div>
             </div>
@@ -590,6 +679,38 @@
                 </div>
             </div>
 
+            <div class="photo-gallery-section">
+                <div class="section-title">우리 아기 성장 앨범</div>
+
+                <div class="photo-gallery-grid grid-3">
+                    <div class="photo-item"><img src="50_1.jpg" data-full-src="50_1.jpg" alt="아기 사진 1">
+                    </div>
+                    <div class="photo-item"><img src="50_2.jpg" data-full-src="50_2.jpg" alt="아기 사진 2">
+                    </div>
+                    <div class="photo-item"><img src="50_3.jpg" data-full-src="50_3.jpg" alt="아기 사진 3">
+                    </div>
+                </div>
+                <div class="photo-gallery-grid grid-2">
+                    <div class="photo-item"><img src="100_1.jpg" data-full-src="100_1.jpg" alt="아기 사진 4">
+                    </div>
+                    <div class="photo-item"><img src="100_2.jpg" data-full-src="100_2.jpg" alt="아기 사진 5">
+                    </div>
+                </div>
+                <div class="photo-gallery-grid grid-2">
+                    <div class="photo-item"><img src="100_3.jpg" data-full-src="100_3.jpg" alt="아기 사진 6">
+                    </div>
+                    <div class="photo-item"><img src="100_4.jpg" data-full-src="100_4.jpg" alt="아기 사진 7">
+                    </div>
+                </div>
+                <div class="photo-gallery-grid grid-3">
+                    <div class="photo-item"><img src="365_1.jpg" data-full-src="365_1.jpg" alt="아기 사진 8">
+                    </div>
+                    <div class="photo-item"><img src="365_2.jpg" data-full-src="365_2.jpg" alt="아기 사진 9">
+                    </div>
+                    <div class="photo-item"><img src="365_3.jpg" data-full-src="365_3.jpg" alt="아기 사진 10">
+                    </div>
+                </div>
+            </div>
             <div class="map-section">
                 <div class="section-title">오시는 길</div>
                 <div class="map-container" id="map">
@@ -603,11 +724,37 @@
                     <a href="" id="kakaoMapLink" class="map-link" target="_blank">카카오 지도에서 보기</a>
                 </div>
             </div>
-            </div> </div> <script>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="imageModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="closeModalBtn">&times;</button>
+            <img src="" alt="확대된 아기 사진" class="modal-image" id="modalImage">
+            <button class="modal-nav-btn prev" id="prevImageBtn">&#10094;</button>
+            <button class="modal-nav-btn next" id="nextImageBtn">&#10095;</button>
+        </div>
+    </div>
+    <script>
         // ✨ 공통 위도, 경도, 장소명 변수 선언 (함수 밖으로 이동) ✨
         const MYERS_ANSAN_LAT = 37.318977; // 위도
         const MYERS_ANSAN_LNG = 126.819687; // 경도
         const MYERS_ANSAN_NAME = '마이어스 안산';
+
+        // 이미지 갤러리 데이터 (모달에서 사용)
+        const galleryImages = [
+            { thumb: '50_1.jpg', full: '50_1.jpg' },
+            { thumb: '50_2.jpg', full: '50_2.jpg' },
+            { thumb: '50_3.jpg', full: '50_3.jpg' },
+            { thumb: '100_1.jpg', full: '100_1.jpg' },
+            { thumb: '100_2.jpg', full: '100_2.jpg' },
+            { thumb: '100_3.jpg', full: '100_3.jpg' },
+            { thumb: '100_4.jpg', full: '100_4.jpg' },
+            { thumb: '365_1.jpg', full: '365_1.jpg' },
+            { thumb: '365_2.jpg', full: '365_2.jpg' },
+            { thumb: '365_3.jpg', full: '365_3.jpg' }
+        ];
+        let currentImageIndex = 0; // 현재 모달에 표시된 이미지 인덱스
 
         // 카운트다운 타이머
         function updateCountdown() {
@@ -642,84 +789,134 @@
         const coverPage = document.getElementById('coverPage');
         const detailPage = document.getElementById('detailPage');
         let scrollTimeout; // 스크롤 종료 감지를 위한 타이머 변수
-        let lastScrollY = 0; // 마지막 스크롤 Y 위치
+        let lastScrollY = 0; // 마지막 스크롤 Y 위치 (현재는 사용하지 않음, 필요시 활용)
         let isTransitionFinished = false; // 전환이 완전히 완료되었는지 여부
+        let isScrollingOrSwiping = false; // 스크롤 또는 스와이프 중인지 여부
 
-        // 스크롤(터치) 시작 감지 변수
-        let isScrolling = false;
-
+        // 스크롤 시작 감지 (transition을 잠시 끔)
         function handleScrollStart() {
-            if (!isScrolling) {
-                isScrolling = true;
-                coverPage.style.transition = 'none'; // 스크롤 시작 시 transition 잠시 끔
-                detailPage.style.transition = 'none'; // detail-page도 함께 끔
+            if (!isScrollingOrSwiping) {
+                isScrollingOrSwiping = true;
+                coverPage.style.transition = 'none';
+                detailPage.style.transition = 'none';
             }
         }
 
+        // 스크롤 종료 감지 (transition을 다시 켜고, 필요시 scrollTo 실행)
         function handleScrollEnd() {
-            if (isScrolling) {
-                isScrolling = false;
-                coverPage.style.transition = 'opacity 0.8s ease, transform 0.8s ease'; // transition 다시  움
-                detailPage.style.transition = 'transform 0.8s ease'; // detail-page transition 다시  움
+            if (isScrollingOrSwiping) {
+                isScrollingOrSwiping = false;
+                coverPage.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                detailPage.style.transition = 'transform 0.8s ease';
 
                 const currentScrollY = window.scrollY;
-                if (currentScrollY > 10 && !isTransitionFinished) { // 스크롤이 충분히 발생했고, 아직 전환 안 됐으면
+                const windowHeight = window.innerHeight;
+
+                if (currentScrollY > windowHeight * 0.1 && !isTransitionFinished) {
+                    // 메인 페이지에서 상세 페이지로 전환
                     coverPage.classList.add('hidden');
-                    detailPage.classList.add('active-full');
-
-                    // detailPage의 상단이 화면의 상단에 오도록 스크롤 위치 조정
+                    detailPage.classList.add('active'); // active-full 대신 active 사용
                     window.scrollTo({
-                        top: detailPage.offsetTop, // detailPage의 시작 위치로 스크롤
-                        behavior: 'smooth' // 부드럽게 스크롤
+                        top: detailPage.offsetTop,
+                        behavior: 'smooth'
                     });
-
-                    isTransitionFinished = true; // 전환 완료 플래그 설정
-                } else if (currentScrollY <= 10 && isTransitionFinished) { // 다시 맨 위로 복귀 시
+                    isTransitionFinished = true;
+                } else if (currentScrollY <= windowHeight * 0.1 && isTransitionFinished) {
+                    // 상세 페이지에서 메인 페이지로 복귀 (스크롤을 맨 위로 되돌렸을 때)
                     coverPage.classList.remove('hidden');
-                    detailPage.classList.remove('active-full');
-                    isTransitionFinished = false; // 플래그 초기화
+                    detailPage.classList.remove('active');
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    isTransitionFinished = false;
                 }
             }
         }
 
         // 스크롤 이벤트 핸들러
         window.addEventListener('scroll', () => {
-            handleScrollStart(); // 스크롤 시작 감지
+            handleScrollStart();
             clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(handleScrollEnd, 150); // 150ms 동안 스크롤 없으면 종료로 판단
-            
+            scrollTimeout = setTimeout(handleScrollEnd, 150);
+
             // 스크롤 중 커버 페이지의 투명도와 위치 조절 (점진적 변화)
-            const scrollProgress = Math.min(1, window.scrollY / (window.innerHeight * 0.5)); // 뷰포트 높이의 50%까지 진행도 계산
-            coverPage.style.opacity = 1 - scrollProgress; // 0% 스크롤 시 1, 50% 스크롤 시 0
-            coverPage.style.transform = `translateY(${scrollProgress * -50}px)`; // -50px까지 이동
+            const scrollProgress = Math.min(1, window.scrollY / (window.innerHeight * 0.5));
+            coverPage.style.opacity = 1 - scrollProgress;
+            coverPage.style.transform = `translateY(${scrollProgress * -50}px)`;
         });
 
-        // 터치 이벤트 핸들러 (scroll 이벤트와 연동되므로 간단히 처리)
-        let initialTouchY = 0;
+        // 터치 이벤트 핸들러
+        let touchStartX = 0;
+        let touchStartY = 0;
+
         document.addEventListener('touchstart', (e) => {
-            initialTouchY = e.touches[0].clientY;
-            handleScrollStart(); // 터치 시작 시 스크롤 시작 감지
-        }, { passive: false }); // passive: false를 추가하여 preventDefault 가능성 열어둠 (필요시)
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            handleScrollStart();
+        }, { passive: false });
 
         document.addEventListener('touchmove', (e) => {
-            // 이벤트를 window.scrollY로 위임하여 처리
-            // 별도의 touchmove 전환 로직은 handleScroll에서 이미 처리되므로 최소화
-            const currentTouchY = e.touches[0].clientY;
-            const diff = initialTouchY - currentTouchY;
+            const touchMoveX = e.touches[0].clientX;
+            const touchMoveY = e.touches[0].clientY;
+            const deltaX = touchStartX - touchMoveX;
+            const deltaY = touchStartY - touchMoveY;
 
-            // 아래로 스크롤 시 (diff 음수) detail-page가 따라 올라오지 않도록 방지
-            // if (diff < 0 && window.scrollY === 0) {
-            //     e.preventDefault(); // 맨 위에서 아래로 당기는 스크롤 방지
-            // }
-
-            clearTimeout(scrollTimeout); // 터치 이동 중에도 스크롤 종료 타이머 초기화
-            scrollTimeout = setTimeout(handleScrollEnd, 150); // 터치 종료 시에도 스크롤 종료 감지
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(handleScrollEnd, 150);
         }, { passive: false });
 
         document.addEventListener('touchend', () => {
-            handleScrollEnd(); // 손을 떼는 순간 스크롤 종료 처리
+            handleScrollEnd();
         });
 
+
+        // ✨ 모달(Lightbox) 관련 함수 및 이벤트 리스너 ✨
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const prevImageBtn = document.getElementById('prevImageBtn');
+        const nextImageBtn = document.getElementById('nextImageBtn');
+
+        function openModal(index) {
+            currentImageIndex = index;
+            modalImage.src = galleryImages[currentImageIndex].full;
+            imageModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // 모달 열렸을 때 본문 스크롤 방지
+        }
+
+        function closeModal() {
+            imageModal.classList.remove('active');
+            document.body.style.overflow = ''; // 본문 스크롤 허용
+        }
+
+        function navigateModal(direction) {
+            currentImageIndex += direction;
+            if (currentImageIndex < 0) {
+                currentImageIndex = galleryImages.length - 1;
+            } else if (currentImageIndex >= galleryImages.length) {
+                currentImageIndex = 0;
+            }
+            modalImage.src = galleryImages[currentImageIndex].full;
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+        prevImageBtn.addEventListener('click', () => navigateModal(-1));
+        nextImageBtn.addEventListener('click', () => navigateModal(1));
+
+        // 모달 외부 클릭 시 닫기
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                closeModal();
+            }
+        });
+
+        // 키보드 ESC 키로 모달 닫기
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && imageModal.classList.contains('active')) {
+                closeModal();
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             const calendarDays = document.querySelectorAll('.calendar-day');
@@ -736,6 +933,12 @@
             setTmapLink();
             setKakaoMapLink();
             setNaverMapWebLink();
+
+            // ✨ 아기 사진 갤러리 이미지에 클릭 이벤트 추가 ✨
+            const photoItems = document.querySelectorAll('.photo-item');
+            photoItems.forEach((item, index) => {
+                item.addEventListener('click', () => openModal(index));
+            });
         });
 
 
@@ -784,7 +987,7 @@
             });
         }
 
-        // 네이버 웹 지도 링크 설정 함수
+        // 네이버 웹 지도 링크 설정 함수 (initNaverMap에서 분리)
         function setNaverMapWebLink() {
             const naverMapLink = document.getElementById('naverMapLink');
             naverMapLink.href = `https://map.naver.com/p/search/${encodeURIComponent(MYERS_ANSAN_NAME)}?c=${MYERS_ANSAN_LNG},${MYERS_ANSAN_LAT},16,0,0,0,dh`;
@@ -797,7 +1000,7 @@
             const iosAppStoreUrl = 'https://apps.apple.com/kr/app/%ED%8B%B0%EB%A7%B5-%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD-%EB%AA%A8%EB%B0%94%EC%9D%BC-%EB%82%B4%EB%B9%84%EA%B2%8C%EC%9D%B4%EC%85%98-%ED%8B%B0%EB%A7%B5/id431589179'; // iOS 티맵 앱스토어 링크
             const tmapScheme = `tmap://route?goalx=${MYERS_ANSAN_LNG}&goaly=${MYERS_ANSAN_LAT}&goalname=${encodeURIComponent(MYERS_ANSAN_NAME)}`;
 
-            tmapLink.addEventListener('click', function(e) {
+            tmapLink.addEventListener('click', function (e) {
                 e.preventDefault(); // 기본 링크 동작 방지
 
                 let clickedAt = +new Date(); // 클릭 시간 기록
@@ -806,7 +1009,7 @@
                 window.location.href = tmapScheme;
 
                 // 딜레이 후 앱이 실행되지 않았으면 스토어로 이동
-                setTimeout(function() {
+                setTimeout(function () {
                     if (+new Date() - clickedAt < 2000) { // 2초 이내에 앱이 실행되지 않으면 (대략적인 값)
                         if (navigator.userAgent.match(/android/i)) {
                             window.location.href = appStoreUrl; // 안드로이드
@@ -827,7 +1030,7 @@
             const iosAppStoreUrl = 'https://apps.apple.com/kr/app/%EC%B9%B4%EC%B9%B4%EC%98%A4%EB%A7%B5-%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD-%EB%AA%A8%EB%B0%94%EC%9D%BC-%ED%8C%8C%ED%8A%B8%EB%84%88/id304608425'; // iOS 카카오맵 앱스토어 링크
             const kakaoScheme = `kakaomap://look?p=${MYERS_ANSAN_LAT},${MYERS_ANSAN_LNG}`;
 
-            kakaoMapLink.addEventListener('click', function(e) {
+            kakaoMapLink.addEventListener('click', function (e) {
                 e.preventDefault(); // 기본 링크 동작 방지
 
                 let clickedAt = +new Date(); // 클릭 시간 기록
@@ -836,7 +1039,7 @@
                 window.location.href = kakaoScheme;
 
                 // 딜레이 후 앱이 실행되지 않았으면 스토어로 이동
-                setTimeout(function() {
+                setTimeout(function () {
                     if (+new Date() - clickedAt < 2000) { // 2초 이내에 앱이 실행되지 않으면 (대략적인 값)
                         if (navigator.userAgent.match(/android/i)) {
                             window.location.href = appStoreUrl; // 안드로이드
